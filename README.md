@@ -1,6 +1,6 @@
 # rss-discord
 
-A simple rust program to scan rss feeds and send a discord ping for new events.
+A simple rust program to scan rss feeds and send discord pings for new events.
 
 ## Installation
 
