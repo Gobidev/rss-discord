@@ -50,7 +50,7 @@ async fn send_webhook(content: &Item, feed_name: &str) -> anyhow::Result<()> {
 }
 
 async fn check_feed(channel: Channel, feed_name: &str) -> anyhow::Result<()> {
-    let file_path = PathBuf::from(format!("./{feed_name}"));
+    let file_path = PathBuf::from(format!("./{feed_name}.cache"));
 
     let hashes: Vec<_> = channel.items().iter().map(calculate_item_hash).collect();
     if file_path.exists() {
