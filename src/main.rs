@@ -34,10 +34,20 @@ async fn send_webhook(content: &Item, feed_name: &str) -> anyhow::Result<()> {
     let client = WebhookClient::new(&webhook_url);
     if let Err(err) = client
         .send(|message| {
-            message.username(feed_name).embed(|embed| {
+            message.username(feed_name).embed(|mut embed| {
+                let description = content.description().unwrap_or("Unknown");
+                match dotenv::var("FEED_IS_HTML")
+                    .map(|val| val.to_lowercase())
+                    .as_ref()
+                    .map(|val| val.as_str())
+                {
+                    Ok("true" | "1") => {
+                        embed = embed.description(&html2md::parse_html(description))
+                    }
+                    _ => embed = embed.description(description),
+                }
                 embed
                     .title(content.title().unwrap_or("Unknown"))
-                    .description(content.description().unwrap_or("Unknown"))
                     .url(content.link().unwrap_or("https://youtu.be/dQw4w9WgXcQ"))
                     .footer(&format!("{:?}", chrono::offset::Local::now()), None)
             })
