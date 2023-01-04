@@ -2,6 +2,12 @@
 name = "rss-discord"
 version = "0.1.0"
 edition = "2021"
+authors = ["Gobidev"]
+description = "A simple rust program to scan rss feeds and send discord pings for new events"
+repository = "https://github.com/Gobidev/rss-discord"
+license = "GPL-3.0-only"
+keywords = ["rss", "discord"]
+categories = ["command-line-utilities"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
