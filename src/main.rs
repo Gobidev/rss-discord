@@ -36,15 +36,9 @@ async fn send_webhook(content: &Item, feed_name: &str) -> anyhow::Result<()> {
         .send(|message| {
             message.username(feed_name).embed(|mut embed| {
                 let description = content.description().unwrap_or("Unknown");
-                match dotenv::var("FEED_IS_HTML")
-                    .map(|val| val.to_lowercase())
-                    .as_ref()
-                    .map(|val| val.as_str())
-                {
-                    Ok("true" | "1") => {
-                        embed = embed.description(&html2md::parse_html(description))
-                    }
-                    _ => embed = embed.description(description),
+                match dotenv::var("FEED_IS_HTML").is_ok() {
+                    true => embed = embed.description(&html2md::parse_html(description)),
+                    false => embed = embed.description(description),
                 }
                 embed
                     .title(content.title().unwrap_or("Unknown"))
