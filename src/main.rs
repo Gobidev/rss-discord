@@ -33,7 +33,10 @@ async fn send_webhook(content: &Item, feed_name: &str) -> anyhow::Result<()> {
     let webhook_url = dotenv::var("WEBHOOK_URL")?;
     let client = WebhookClient::new(&webhook_url);
     if let Err(err) = client
-        .send(|message| {
+        .send(|mut message| {
+            if let Ok(content) = dotenv::var("MESSAGE_CONTENT") {
+                message = message.content(&content);
+            }
             message.username(feed_name).embed(|embed| {
                 embed
                     .title(content.title().unwrap_or("Unknown"))

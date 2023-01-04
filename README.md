@@ -12,10 +12,12 @@ located at ./target/release/
 
 Run the binary with the following environment variables set:
 
--   `WEBHOOK_URL`: A discord webhook url to send the notifications to
--   `FEED_URL`: A url pointing to the rss feed that you want to monitor
--   `FEED_NAME`: A name for the rss feed
+- `WEBHOOK_URL`: A discord webhook url to send the notifications to
+- `FEED_URL`: A url pointing to the rss feed that you want to monitor
+- `FEED_NAME`: A name for the rss feed
+- `MESSAGE_CONTENT`: Optional content for the message, useful for pinging users
+  or roles with `<@user_id>` or `<@&role_id>`
 
 I recommend running the program periodically (i.e. with cron) to receive updates
-of the feed. To check for updates on multiple feeds at once, create
-multiple cron jobs with different environment variables.
+of the feed. To check for updates on multiple feeds at once, create multiple
+cron jobs with different environment variables.
