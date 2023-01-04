@@ -12,7 +12,7 @@ located at ./target/release/
 
 Run the binary with the following environment variables set:
 
--   `WEBHOOL_URL`: A discord webhook url to send the notifications to
+-   `WEBHOOK_URL`: A discord webhook url to send the notifications to
 -   `FEED_URL`: A url pointing to the rss feed that you want to monitor
 -   `FEED_NAME`: A name for the rss feed
 
