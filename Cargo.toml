@@ -5,7 +5,7 @@ edition = "2021"
 authors = ["Gobidev"]
 description = "A simple rust program to scan rss feeds and send discord pings for new events"
 repository = "https://github.com/Gobidev/rss-discord"
-license = "GPL-3.0-only"
+license = "MIT"
 keywords = ["rss", "discord"]
 categories = ["command-line-utilities"]
 
