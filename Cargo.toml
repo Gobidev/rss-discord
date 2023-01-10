@@ -21,4 +21,4 @@ reqwest = "0.11.13"
 ron = "0.8.0"
 rss = "2.0.1"
 serde = { version = "1.0.152", features = ["derive"] }
-tokio = { version = "1.23.0", features = ["full"] }
+tokio = { version = "1.23.1", features = ["full"] }
