@@ -10,8 +10,8 @@ use std::{
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let feed_url = dotenv::var("FEED_URL").expect("FEED_URL environment variable not set");
-    let feed_name = dotenv::var("FEED_NAME").expect("FEED_NAME environment variable not set");
+    let feed_url = dotenvy::var("FEED_URL").expect("FEED_URL environment variable not set");
+    let feed_name = dotenvy::var("FEED_NAME").expect("FEED_NAME environment variable not set");
 
     check_feed(get_channel_from_url(&feed_url).await?, &feed_name).await?;
     Ok(())
@@ -30,16 +30,16 @@ fn calculate_item_hash(item: &Item) -> u64 {
 }
 
 async fn send_webhook(content: &Item, feed_name: &str) -> anyhow::Result<()> {
-    let webhook_url = dotenv::var("WEBHOOK_URL")?;
+    let webhook_url = dotenvy::var("WEBHOOK_URL")?;
     let client = WebhookClient::new(&webhook_url);
     if let Err(err) = client
         .send(|mut message| {
-            if let Ok(content) = dotenv::var("MESSAGE_CONTENT") {
+            if let Ok(content) = dotenvy::var("MESSAGE_CONTENT") {
                 message = message.content(&content);
             }
             message.username(feed_name).embed(|mut embed| {
                 let description = content.description().unwrap_or("Unknown");
-                match dotenv::var("FEED_IS_HTML").is_ok() {
+                match dotenvy::var("FEED_IS_HTML").is_ok() {
                     true => embed = embed.description(&html2md::parse_html(description)),
                     false => embed = embed.description(description),
                 }
