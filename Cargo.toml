@@ -13,7 +13,7 @@ categories = ["command-line-utilities"]
 
 [dependencies]
 anyhow = "1.0.68"
-chrono = "0.4.23"
+chrono = { version = "0.4.23", default-features = false, features= ["clock"]}
 discord-webhook = "0.1.0"
 dotenvy = "0.15.6"
 html2md = "0.2.14"
