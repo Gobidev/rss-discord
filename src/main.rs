@@ -5,6 +5,7 @@ use std::{
     collections::{hash_map::DefaultHasher, HashSet},
     fs,
     hash::{Hash, Hasher},
+    mem,
     path::PathBuf,
 };
 
@@ -13,7 +14,12 @@ async fn main() -> anyhow::Result<()> {
     let feed_url = dotenvy::var("FEED_URL").expect("FEED_URL environment variable not set");
     let feed_name = dotenvy::var("FEED_NAME").expect("FEED_NAME environment variable not set");
 
-    check_feed(get_channel_from_url(&feed_url).await?, &feed_name).await?;
+    check_feed(
+        get_channel_from_url(&feed_url).await?,
+        &feed_name,
+        &parse_replacements(),
+    )
+    .await?;
     Ok(())
 }
 
@@ -29,7 +35,11 @@ fn calculate_item_hash(item: &Item) -> u64 {
     hasher.finish()
 }
 
-async fn send_webhook(content: &Item, feed_name: &str) -> anyhow::Result<()> {
+async fn send_webhook(
+    content: &Item,
+    feed_name: &str,
+    replacements: &[(String, String)],
+) -> anyhow::Result<()> {
     let webhook_url = dotenvy::var("WEBHOOK_URL")?;
     let client = WebhookClient::new(&webhook_url);
     if let Err(err) = client
@@ -37,14 +47,18 @@ async fn send_webhook(content: &Item, feed_name: &str) -> anyhow::Result<()> {
             if let Ok(content) = dotenvy::var("MESSAGE_CONTENT") {
                 message = message.content(&content);
             }
-            message.username(feed_name).embed(|mut embed| {
+            message.username(feed_name).embed(|embed| {
                 let description = content.description().unwrap_or("Unknown");
-                match dotenvy::var("FEED_IS_HTML").is_ok() {
-                    true => embed = embed.description(&html2md::parse_html(description)),
-                    false => embed = embed.description(description),
+                let mut description = match dotenvy::var("FEED_IS_HTML").is_ok() {
+                    true => html2md::parse_html(description),
+                    false => description.to_owned(),
+                };
+                for (search, replacement) in replacements {
+                    description = description.replace(search, replacement);
                 }
                 embed
                     .title(content.title().unwrap_or("Unknown"))
+                    .description(&description)
                     .url(content.link().unwrap_or("https://youtu.be/dQw4w9WgXcQ"))
                     .footer(&format!("{:?}", chrono::offset::Local::now()), None)
             })
@@ -56,7 +70,11 @@ async fn send_webhook(content: &Item, feed_name: &str) -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn check_feed(channel: Channel, feed_name: &str) -> anyhow::Result<()> {
+async fn check_feed(
+    channel: Channel,
+    feed_name: &str,
+    replacements: &[(String, String)],
+) -> anyhow::Result<()> {
     let file_path = PathBuf::from(format!("./{feed_name}.cache"));
 
     let hashes: Vec<_> = channel.items().iter().map(calculate_item_hash).collect();
@@ -68,9 +86,41 @@ async fn check_feed(channel: Channel, feed_name: &str) -> anyhow::Result<()> {
             .enumerate()
             .filter(|(_, hash)| !stored_hashes.contains(hash))
         {
-            send_webhook(&channel.items()[index], feed_name).await?;
+            send_webhook(&channel.items()[index], feed_name, replacements).await?;
         }
     }
     fs::write(file_path, ron::to_string(&hashes)?)?;
     Ok(())
+}
+
+fn parse_replacements() -> Vec<(String, String)> {
+    let mut escaped = false;
+    let mut search = String::new();
+    let mut replacement = String::new();
+    let mut replacements = vec![];
+    for char in dotenvy::var("RSS_REPLACEMENTS")
+        .unwrap_or(String::new())
+        .chars()
+    {
+        match (char, escaped) {
+            ('\\', false) => {
+                escaped = true;
+            }
+            (':', false) => {
+                replacements.push((mem::take(&mut search), mem::take(&mut replacement)));
+            }
+            ('/', false) => {
+                mem::swap(&mut search, &mut replacement);
+            }
+            (_, true) => {
+                replacement.push(char);
+                escaped = false;
+            }
+            (_, false) => {
+                replacement.push(char);
+            }
+        }
+    }
+    replacements.push((mem::take(&mut search), mem::take(&mut replacement)));
+    replacements
 }
