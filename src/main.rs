@@ -99,7 +99,7 @@ fn parse_replacements() -> Vec<(String, String)> {
     let mut replacement = String::new();
     let mut replacements = vec![];
     for char in dotenvy::var("RSS_REPLACEMENTS")
-        .unwrap_or(String::new())
+        .unwrap_or_default()
         .chars()
     {
         match (char, escaped) {
