@@ -1,6 +1,6 @@
 [package]
 name = "rss-discord"
-version = "0.2.4"
+version = "0.2.5"
 edition = "2021"
 authors = ["Gobidev"]
 description = "A simple rust program to scan rss feeds and send discord pings for new events"
