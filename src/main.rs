@@ -60,7 +60,13 @@ async fn send_webhook(
                     .title(content.title().unwrap_or("Unknown"))
                     .description(&description)
                     .url(content.link().unwrap_or("https://youtu.be/dQw4w9WgXcQ"))
-                    .footer(&format!("{:?}", chrono::offset::Local::now()), None)
+                    .footer(&format!("{:?}", chrono::offset::Local::now()), None);
+                if let Some(enclosure) = &content.enclosure {
+                    if enclosure.mime_type.starts_with("image") {
+                        embed.image(&enclosure.url);
+                    }
+                };
+                embed
             })
         })
         .await
