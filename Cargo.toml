@@ -13,12 +13,13 @@ categories = ["command-line-utilities"]
 
 [dependencies]
 anyhow = "1.0.68"
-chrono = { version = "0.4.23", default-features = false, features= ["clock"]}
+atom_syndication = "0.12.8"
+chrono = { version = "0.4.23", default-features = false, features = ["clock"] }
 discord-webhook = "0.1.0"
 dotenvy = "0.15.6"
 html2md = "0.2.14"
 reqwest = "0.12.9"
 ron = "0.8.0"
-rss = "2.0.1"
+rss = "2.0.13"
 serde = { version = "1.0.152", features = ["derive"] }
 tokio = { version = "1.25.0", features = ["full"] }
