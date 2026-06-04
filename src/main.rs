@@ -52,7 +52,7 @@ impl Item {
     fn description(&self) -> Option<&str> {
         match self {
             Item::Rss(item) => item.description(),
-            Item::Atom(entry) => entry.summary().map(|text| text.value.as_str()),
+            Item::Atom(entry) => entry.content().and_then(|content| content.value.as_deref()),
         }
     }
 
