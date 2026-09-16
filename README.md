@@ -17,8 +17,8 @@ Run the binary with the following environment variables set:
 - `FEED_NAME`: A name for the rss feed
 - `MESSAGE_CONTENT`: Optional content for the message, useful for pinging users
   or roles with `<@user_id>` or `<@&role_id>`
-- `FEED_IS_HTML`: If this variable is set to any value, the feed description
-  will be handled as html
+- `FEED_IS_HTML`: If this variable is set to a truthy value (`1`, `true`,
+  `yes` or `on`), the feed description will be handled as html
 - `RSS_REPLACEMENTS`: A list, separated by `:`, where each entry specifies a
   replacement to apply on the embed's description with the syntax
   `<search>/<replacement>`. Backslashes are used to escape `:` and `/`
