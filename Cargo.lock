@@ -1191,7 +1191,7 @@ dependencies = [
 
 [[package]]
 name = "rss-discord"
-version = "0.2.21"
+version = "0.3.0"
 dependencies = [
  "anyhow",
  "atom_syndication",
